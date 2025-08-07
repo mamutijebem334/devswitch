@@ -1,0 +1,21 @@
+# Maintainer: DevSwitch Team <support@devswitch.dev>
+pkgname=devswitch
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Instantly switch developer profiles (.gitconfig, shell rc, VSCode settings) across work/school/personal setups"
+arch=('x86_64' 'aarch64')
+url="https://github.com/GustyCube/devswitch"
+license=('MIT')
+depends=('glibc')
+source_x86_64=("https://github.com/GustyCube/devswitch/releases/download/v${pkgver}/devswitch-linux-amd64")
+source_aarch64=("https://github.com/GustyCube/devswitch/releases/download/v${pkgver}/devswitch-linux-arm64")
+sha256sums_x86_64=('REPLACE_WITH_ACTUAL_SHA256_AMD64')
+sha256sums_aarch64=('REPLACE_WITH_ACTUAL_SHA256_ARM64')
+
+package() {
+    if [ "$CARCH" = "x86_64" ]; then
+        install -Dm755 "$srcdir/devswitch-linux-amd64" "$pkgdir/usr/bin/devswitch"
+    elif [ "$CARCH" = "aarch64" ]; then
+        install -Dm755 "$srcdir/devswitch-linux-arm64" "$pkgdir/usr/bin/devswitch"
+    fi
+}

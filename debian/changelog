@@ -1,0 +1,11 @@
+devswitch (1.0.0) stable; urgency=medium
+
+  * Initial release of DevSwitch CLI
+  * Instant profile switching for developer configurations
+  * Beautiful CLI with styled boxes and progress bars
+  * Automatic backup and rollback system
+  * Profile comparison and selective apply
+  * Template system (corporate, personal, minimal)
+  * Extended configuration support for Git, SSH, Docker, NPM, AWS
+
+ -- Bennett Schwartz <gc@gustycube.xyz>  Thu, 07 Aug 2025 00:00:00 +0000

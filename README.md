@@ -33,23 +33,78 @@
 
 ## Installation 📥
 
-### Homebrew (Recommended)
+### 🚀 Quick Install (Recommended)
 ```bash
-# Coming soon
-brew install devswitch
+# Universal installer - detects your OS and architecture automatically
+curl -fsSL https://raw.githubusercontent.com/GustyCube/devswitch/main/install.sh | bash
 ```
 
-### Direct Download
+### Package Managers
+
+#### macOS
+```bash
+# Homebrew (coming soon to homebrew-core)
+brew install devswitch
+
+# Manual Homebrew install
+brew install GustyCube/tap/devswitch
+```
+
+#### Windows
+```bash
+# Scoop
+scoop bucket add GustyCube https://github.com/GustyCube/scoop-bucket
+scoop install devswitch
+
+# Chocolatey (coming soon)
+choco install devswitch
+```
+
+#### Linux
+
+**Ubuntu/Debian (APT)**
+```bash
+# Add GPG key and repository
+curl -fsSL https://raw.githubusercontent.com/GustyCube/devswitch/main/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/devswitch.gpg
+echo "deb [signed-by=/usr/share/keyrings/devswitch.gpg] https://raw.githubusercontent.com/GustyCube/devswitch/main/deb stable main" | sudo tee /etc/apt/sources.list.d/devswitch.list
+
+# Install
+sudo apt update && sudo apt install devswitch
+```
+
+**RHEL/Fedora/CentOS (RPM)**
+```bash
+# Add repository
+sudo dnf config-manager --add-repo https://raw.githubusercontent.com/GustyCube/devswitch/main/rpm/devswitch.repo
+
+# Install
+sudo dnf install devswitch
+```
+
+**Arch Linux (AUR)**
+```bash
+# Using yay
+yay -S devswitch
+
+# Using paru  
+paru -S devswitch
+
+# Manual
+git clone https://aur.archlinux.org/devswitch.git
+cd devswitch && makepkg -si
+```
+
+### Manual Installation
 ```bash
 # Download latest release for your platform
-curl -L https://github.com/yourusername/devswitch/releases/latest/download/devswitch-$(uname -s)-$(uname -m) -o devswitch
+curl -L https://github.com/GustyCube/devswitch/releases/latest/download/devswitch-$(uname -s)-$(uname -m) -o devswitch
 chmod +x devswitch
 sudo mv devswitch /usr/local/bin/
 ```
 
 ### Build from Source
 ```bash
-git clone https://github.com/yourusername/devswitch.git
+git clone https://github.com/GustyCube/devswitch.git
 cd devswitch
 go build -o devswitch .
 sudo cp devswitch /usr/local/bin/
