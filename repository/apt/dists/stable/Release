@@ -1,0 +1,9 @@
+Origin: DevSwitch
+Label: DevSwitch
+Suite: stable
+Codename: stable
+Version: 1.0
+Architectures: amd64
+Components: main
+Description: DevSwitch - Instant Developer Profile Switching
+Date: Wed, 07 Aug 2025 12:00:00 UTC

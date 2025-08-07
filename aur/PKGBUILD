@@ -1,6 +1,6 @@
 # Maintainer: DevSwitch Team <support@devswitch.dev>
 pkgname=devswitch
-pkgver=1.0.0
+pkgver=0.1.0
 pkgrel=1
 pkgdesc="Instantly switch developer profiles (.gitconfig, shell rc, VSCode settings) across work/school/personal setups"
 arch=('x86_64' 'aarch64')
@@ -9,8 +9,8 @@ license=('MIT')
 depends=('glibc')
 source_x86_64=("https://github.com/GustyCube/devswitch/releases/download/v${pkgver}/devswitch-linux-amd64")
 source_aarch64=("https://github.com/GustyCube/devswitch/releases/download/v${pkgver}/devswitch-linux-arm64")
-sha256sums_x86_64=('REPLACE_WITH_ACTUAL_SHA256_AMD64')
-sha256sums_aarch64=('REPLACE_WITH_ACTUAL_SHA256_ARM64')
+sha256sums_x86_64=('1fd51d73d0e816afb7f7d22beb6c72cd6fcc3cbef4a6184301900b6f93180638')
+sha256sums_aarch64=('9c8b7211f47417d0d55ce4416d929dd1da0a85e3eb08efd27528deaa32cc1ec3')
 
 package() {
     if [ "$CARCH" = "x86_64" ]; then
