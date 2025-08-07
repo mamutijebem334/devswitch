@@ -92,3 +92,99 @@ jobs:
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-package-managers:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Get version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+    - name: Wait for release assets to be available
+      run: sleep 30
+
+    - name: Calculate SHA256 hashes
+      id: hashes
+      run: |
+        VERSION="${{ steps.get_version.outputs.VERSION }}"
+        
+        # Download binaries and calculate hashes
+        curl -sL "https://github.com/${{ github.repository }}/releases/download/$VERSION/devswitch-darwin-amd64" | sha256sum | cut -d' ' -f1 > darwin_amd64.sha
+        curl -sL "https://github.com/${{ github.repository }}/releases/download/$VERSION/devswitch-darwin-arm64" | sha256sum | cut -d' ' -f1 > darwin_arm64.sha
+        curl -sL "https://github.com/${{ github.repository }}/releases/download/$VERSION/devswitch-linux-amd64" | sha256sum | cut -d' ' -f1 > linux_amd64.sha
+        curl -sL "https://github.com/${{ github.repository }}/releases/download/$VERSION/devswitch-linux-arm64" | sha256sum | cut -d' ' -f1 > linux_arm64.sha
+        curl -sL "https://github.com/${{ github.repository }}/releases/download/$VERSION/devswitch-windows-amd64.exe" | sha256sum | cut -d' ' -f1 > windows_amd64.sha
+        
+        # Store hashes as outputs
+        echo "DARWIN_AMD64=$(cat darwin_amd64.sha)" >> $GITHUB_OUTPUT
+        echo "DARWIN_ARM64=$(cat darwin_arm64.sha)" >> $GITHUB_OUTPUT
+        echo "LINUX_AMD64=$(cat linux_amd64.sha)" >> $GITHUB_OUTPUT
+        echo "LINUX_ARM64=$(cat linux_arm64.sha)" >> $GITHUB_OUTPUT
+        echo "WINDOWS_AMD64=$(cat windows_amd64.sha)" >> $GITHUB_OUTPUT
+
+    - name: Update Homebrew formula
+      run: |
+        VERSION="${{ steps.get_version.outputs.VERSION }}"
+        sed -i "s/version \".*\"/version \"${VERSION#v}\"/" homebrew/devswitch.rb
+        sed -i "s/v[0-9.]\+/v${VERSION#v}/g" homebrew/devswitch.rb
+        sed -i "s/REPLACE_WITH_ACTUAL_SHA256_FOR_AMD64/${{ steps.hashes.outputs.DARWIN_AMD64 }}/" homebrew/devswitch.rb
+        sed -i "s/REPLACE_WITH_ACTUAL_SHA256_FOR_ARM64/${{ steps.hashes.outputs.DARWIN_ARM64 }}/" homebrew/devswitch.rb
+        sed -i "s/REPLACE_WITH_ACTUAL_SHA256_FOR_LINUX_AMD64/${{ steps.hashes.outputs.LINUX_AMD64 }}/" homebrew/devswitch.rb
+        sed -i "s/REPLACE_WITH_ACTUAL_SHA256_FOR_LINUX_ARM64/${{ steps.hashes.outputs.LINUX_ARM64 }}/" homebrew/devswitch.rb
+
+    - name: Update Scoop manifest
+      run: |
+        VERSION="${{ steps.get_version.outputs.VERSION }}"
+        sed -i "s/\"version\": \".*\"/\"version\": \"${VERSION#v}\"/" scoop/devswitch.json
+        sed -i "s/v[0-9.]\+/v${VERSION#v}/g" scoop/devswitch.json
+        sed -i "s/REPLACE_WITH_ACTUAL_SHA256/${{ steps.hashes.outputs.WINDOWS_AMD64 }}/" scoop/devswitch.json
+
+    - name: Update AUR PKGBUILD
+      run: |
+        VERSION="${{ steps.get_version.outputs.VERSION }}"
+        sed -i "s/pkgver=.*/pkgver=${VERSION#v}/" aur/PKGBUILD
+        sed -i "s/v[0-9.]\+/v${VERSION#v}/g" aur/PKGBUILD
+        sed -i "s/REPLACE_WITH_ACTUAL_SHA256_AMD64/${{ steps.hashes.outputs.LINUX_AMD64 }}/" aur/PKGBUILD
+        sed -i "s/REPLACE_WITH_ACTUAL_SHA256_ARM64/${{ steps.hashes.outputs.LINUX_ARM64 }}/" aur/PKGBUILD
+
+    - name: Update AUR .SRCINFO
+      run: |
+        VERSION="${{ steps.get_version.outputs.VERSION }}"
+        sed -i "s/pkgver = .*/pkgver = ${VERSION#v}/" aur/.SRCINFO
+        sed -i "s/v[0-9.]\+/v${VERSION#v}/g" aur/.SRCINFO
+        sed -i "s/REPLACE_WITH_ACTUAL_SHA256_AMD64/${{ steps.hashes.outputs.LINUX_AMD64 }}/" aur/.SRCINFO
+        sed -i "s/REPLACE_WITH_ACTUAL_SHA256_ARM64/${{ steps.hashes.outputs.LINUX_ARM64 }}/" aur/.SRCINFO
+
+    - name: Update Debian changelog
+      run: |
+        VERSION="${{ steps.get_version.outputs.VERSION }}"
+        DATE=$(date -R)
+        cat > debian/changelog << EOF
+        devswitch (${VERSION#v}) stable; urgency=medium
+
+          * Release ${VERSION}
+          * See GitHub releases for detailed changelog
+
+         -- Bennett Schwartz <gc@gustycube.xyz>  $DATE
+        EOF
+
+    - name: Update RPM spec
+      run: |
+        VERSION="${{ steps.get_version.outputs.VERSION }}"
+        sed -i "s/Version:.*/Version:        ${VERSION#v}/" rpm/devswitch.spec
+        sed -i "s/v[0-9.]\+/v${VERSION#v}/g" rpm/devswitch.spec
+
+    - name: Commit and push package manager updates
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add homebrew/ scoop/ aur/ debian/ rpm/
+        git commit -m "chore: update package managers with SHA256 hashes for ${{ steps.get_version.outputs.VERSION }}" || exit 0
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
