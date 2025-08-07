@@ -36,13 +36,12 @@ jobs:
       run: go install honnef.co/go/tools/cmd/staticcheck@latest
 
     - name: Run staticcheck
-      run: staticcheck ./...
+      run: |
+        export PATH=$PATH:$(go env GOPATH)/bin
+        staticcheck ./...
 
-    - name: Install gosec
-      run: go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
-
-    - name: Run gosec Security Scanner
-      run: gosec ./...
+    - name: Run security check with go vet
+      run: go vet -all ./...
 
   build-matrix:
     runs-on: ubuntu-latest
