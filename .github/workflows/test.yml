@@ -38,10 +38,11 @@ jobs:
     - name: Run staticcheck
       run: staticcheck ./...
 
+    - name: Install gosec
+      run: go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
+
     - name: Run gosec Security Scanner
-      uses: securecodewarrior/github-action-gosec@master
-      with:
-        args: './...'
+      run: gosec ./...
 
   build-matrix:
     runs-on: ubuntu-latest
