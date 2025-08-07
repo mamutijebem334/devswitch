@@ -1,0 +1,26 @@
+Package: devswitch
+Version: 0.1.0-1
+Architecture: amd64
+Maintainer: Bennett Schwartz <gc@gustycube.xyz>
+Depends: libc6
+Filename: repository/apt/pool/main/d/devswitch/devswitch_0.1.0-1.deb
+Size: 3674252
+MD5sum: fe4af0568fa7fb206d20a1751397c52f
+SHA1: 8800ad70460f519812e87e530d79b55ddc9a6b29
+SHA256: c213f41e2fc6fa9a527cab13bfd0b72084dc1a71749c05af4f35b63572ba67b1
+Section: utils
+Priority: optional
+Homepage: https://github.com/GustyCube/devswitch
+Description: Instantly switch developer profiles
+ DevSwitch allows developers to instantly switch between different
+ configuration profiles (.gitconfig, shell rc, VSCode settings) across
+ work, school, and personal environments.
+ .
+ Features:
+  * Beautiful CLI with styled boxes and progress bars
+  * Profile templates (corporate, personal, minimal)
+  * Automatic backup and rollback system
+  * Profile comparison and selective apply
+  * Support for 15+ configuration file types
+  * Cross-platform compatibility
+

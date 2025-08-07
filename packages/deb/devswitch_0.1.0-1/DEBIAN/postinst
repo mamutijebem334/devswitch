@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+echo "DevSwitch v0.1.0 has been installed successfully!"
+echo ""
+echo "Quick start:"
+echo "  devswitch create work --template corporate"
+echo "  devswitch create personal --template personal"
+echo "  devswitch list"
+echo "  devswitch apply work"
+echo ""
+echo "Documentation: https://github.com/GustyCube/devswitch"
+
+exit 0
