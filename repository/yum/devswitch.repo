@@ -1,7 +1,7 @@
 [devswitch]
 name=DevSwitch Repository
-baseurl=https://gustycube.github.io/devswitch/repository/yum/$releasever/$basearch
+baseurl=https://devswitch.gustycube.com/repository/yum/$releasever/$basearch
 enabled=1
 gpgcheck=0
 repo_gpgcheck=0
-gpgkey=https://gustycube.github.io/devswitch/repository/RPM-GPG-KEY-devswitch
+gpgkey=https://devswitch.gustycube.com/repository/RPM-GPG-KEY-devswitch

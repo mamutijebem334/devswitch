@@ -64,18 +64,19 @@ choco install devswitch
 
 **Ubuntu/Debian (APT)**
 ```bash
-# Add GPG key and repository
-curl -fsSL https://raw.githubusercontent.com/GustyCube/devswitch/main/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/devswitch.gpg
-echo "deb [signed-by=/usr/share/keyrings/devswitch.gpg] https://raw.githubusercontent.com/GustyCube/devswitch/main/deb stable main" | sudo tee /etc/apt/sources.list.d/devswitch.list
+# Quick install
+curl -fsSL https://devswitch.gustycube.com/repository/install-apt.sh | sudo bash
+sudo apt install devswitch
 
-# Install
+# Manual setup
+echo "deb https://devswitch.gustycube.com/repository/apt stable main" | sudo tee /etc/apt/sources.list.d/devswitch.list
 sudo apt update && sudo apt install devswitch
 ```
 
 **RHEL/Fedora/CentOS (RPM)**
 ```bash
 # Add repository
-sudo dnf config-manager --add-repo https://raw.githubusercontent.com/GustyCube/devswitch/main/rpm/devswitch.repo
+sudo curl -o /etc/yum.repos.d/devswitch.repo https://devswitch.gustycube.com/repository/yum/devswitch.repo
 
 # Install
 sudo dnf install devswitch

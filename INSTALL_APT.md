@@ -4,7 +4,7 @@
 
 ```bash
 # Add the repository
-curl -fsSL https://gustycube.github.io/devswitch/install-apt.sh | sudo bash
+curl -fsSL https://devswitch.gustycube.com/repository/install-apt.sh | sudo bash
 
 # Install DevSwitch
 sudo apt update
@@ -15,7 +15,7 @@ sudo apt install devswitch
 
 ```bash
 # Add repository to sources
-echo "deb https://gustycube.github.io/devswitch/repository/apt stable main" | sudo tee /etc/apt/sources.list.d/devswitch.list
+echo "deb https://devswitch.gustycube.com/repository/apt stable main" | sudo tee /etc/apt/sources.list.d/devswitch.list
 
 # Update package list
 sudo apt update

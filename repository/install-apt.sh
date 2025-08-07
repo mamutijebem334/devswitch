@@ -23,7 +23,7 @@ fi
 print_status "Adding DevSwitch APT repository..."
 
 # Add repository
-echo "deb https://gustycube.github.io/devswitch/repository/apt stable main" > /etc/apt/sources.list.d/devswitch.list
+echo "deb https://devswitch.gustycube.com/repository/apt stable main" > /etc/apt/sources.list.d/devswitch.list
 
 print_success "Repository added to /etc/apt/sources.list.d/devswitch.list"
 
